@@ -3,29 +3,7 @@ name: Tests
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  # Build the project with a known-good Node version that handles TypeScript 6
-  # well. TypeScript 6 compilation is extremely slow on Node 18/20, so we build
-  # once here using Node 22 and populate the wireit cache. The subsequent test
-  # jobs can then skip recompilation by hitting the shared wireit cache.
-  build:
-    name: Build
-    timeout-minutes: 5
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-
-      - uses: google/wireit@setup-github-actions-caching/v2
-      - run: npm ci
-      # Build through wireit so the build fingerprint is cached in the shared
-      # GitHub Actions cache.
-      - run: npm run build
-
   tests:
-    needs: build
     strategy:
       # NODE POLICY
       #
